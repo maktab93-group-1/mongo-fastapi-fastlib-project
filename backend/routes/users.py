@@ -6,13 +6,15 @@ from typing import Annotated
 from auth.jwt_utils import get_access_token
 from crud.users import create_user
 from db import USERS
-
+from auth.auth_utils import get_password_hash
 
 user_router = APIRouter(prefix="/users")
 
 @user_router.post("/register/",response_model=ReturnUser)
-def register(user: CreateUser): # TODO check if the user exists
-    result = create_user(USERS,user)
+def register(user: CreateUser): 
+    user = user.dict()
+    in_db_user = CreateUser(password=get_password_hash(user.pop('password')), **user)
+    result = create_user(USERS,in_db_user)
     if not result:
         raise HTTPException(status_code=422, detail="Could not create user!")
     return user
