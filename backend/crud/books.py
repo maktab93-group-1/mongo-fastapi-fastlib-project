@@ -1,4 +1,4 @@
-from utils import create_document, read_document, read_all_documents, update_document, delete_document
+from crud.utils import create_document, read_document, read_all_documents, update_document, delete_document
 
 def create_book(collection, new_book):
     return create_document(collection, new_book)

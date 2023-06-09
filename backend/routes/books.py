@@ -1,19 +1,22 @@
 from fastapi import APIRouter
-
+from schemas.books import CreateBook, ReturnBook
+from typing import List
+from crud.books import read_all_books, create_book, read_book
+from db import BOOKS
 
 book_router = APIRouter(prefix="/books")
 
-@book_router.get("/")
+@book_router.get("/", response_model=List[ReturnBook])
 def get_books():
-    pass
+    return read_all_books(BOOKS)
 
 @book_router.post("/")
-def add_books():
-    pass
+def add_books(book: CreateBook):
+    return create_book(BOOKS, book)
 
 @book_router.get("/{book_id}/")
-def get_book():
-    pass
+def get_book(book_id): # TODO
+    read_book(BOOKS, "_id", book_id)
 
 @book_router.put("/{book_id}/")
 def update_book():
