@@ -11,7 +11,7 @@ def get_password_hash(password):
     return pwd_context.hash(password)
 
 def get_user(db_collection, username: str):
-    if username in db_collection:
+    if username in list(db_collection.find()):
         user_dict = db_collection.find({"username": username})
         return CreateUser(**user_dict)
     return None

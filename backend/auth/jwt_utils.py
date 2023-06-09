@@ -7,7 +7,7 @@ from typing import Annotated
 import os
 from dotenv import load_dotenv
 from schemas.tokens import TokenData
-from auth_utils import get_user, authenticate_user
+from auth.auth_utils import authenticate_user , get_user
 from schemas.users import CreateUser
 
 # Load Environment Variables
