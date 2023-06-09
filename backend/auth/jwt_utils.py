@@ -7,7 +7,8 @@ from typing import Annotated
 import os
 from dotenv import load_dotenv
 from schemas.tokens import TokenData
-from auth.auth_utils import authenticate_user , get_user
+from auth.auth_utils import authenticate_user
+from crud.users import read_user
 from schemas.users import CreateUser
 
 # Load Environment Variables
@@ -36,7 +37,7 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
         token_data = TokenData(username=username)
     except JWTError:
         raise credentials_exception
-    user = get_user(USERS, username=token_data.username)
+    user = read_user(USERS, username=token_data.username)
     if user is None:
         raise credentials_exception
     return user
@@ -66,7 +67,7 @@ def get_access_token(form_data):
             detail="Incorrect username or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token_expires = timedelta(minutes=int(ACCESS_TOKEN_EXPIRE_MINUTES))
     access_token = create_access_token(
         data={"sub": user.username}, expires_delta=access_token_expires
     )
