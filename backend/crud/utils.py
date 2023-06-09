@@ -1,17 +1,12 @@
 def create_document(collection , document):
-    try :
-        document_dict = document.dict()
-        collection.insert_one(document_dict)
-        return True
-    except:
-        return False
-    
+    document_dict = document.dict()
+    collection.insert_one(document_dict)
+    return document
+
+
 def read_all_documents(collection):
-    try :
-        result = list(collection.find())
-        return result
-    except:
-        return None
+    result = list(collection.find())
+    return result
     
 
 def read_document(collection , property , value):
@@ -20,3 +15,14 @@ def read_document(collection , property , value):
     return result
 
 
+def update_document(collection, id, new_document):
+    filter = { "_id": id }
+    newvalues = { "$set": new_document.dict() }
+    collection.update_one(filter, newvalues)
+    return new_document
+    
+
+def delete_document(collection, id):
+    filter = { "_id": id }
+    deleted_document = collection.delete_one(filter)
+    return deleted_document
