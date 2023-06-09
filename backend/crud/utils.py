@@ -22,7 +22,7 @@ def update_document(collection, id, new_document):
     return new_document
     
 
-def delete(collection, id):
+def delete_document(collection, id):
     filter = { "_id": id }
     deleted_document = collection.delete_one(filter)
     return deleted_document
