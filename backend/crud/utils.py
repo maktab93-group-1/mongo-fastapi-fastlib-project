@@ -9,9 +9,9 @@ def read_all_documents(collection):
     return result
     
 
-def read_document(collection , property , value):
-
-    result = list(collection.find({property : value}))
+def read_document(collection , property: str , value: str):
+    db_filter = {property : value}
+    result = collection.find_one(db_filter)
     return result
 
 
