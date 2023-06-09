@@ -19,3 +19,5 @@ USERS = db['users']
 BOOKS = db['books']
 
 # USERS.__dict__
+# USERS.update_one()
+# USERS.delete_one()
