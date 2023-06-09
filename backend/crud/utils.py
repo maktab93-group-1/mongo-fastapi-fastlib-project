@@ -6,12 +6,14 @@ def create_document(collection , document):
 
 def read_all_documents(collection):
     result = list(collection.find())
+    print(result)
     return result
     
 
 def read_document(collection , property: str , value: str):
     db_filter = {property : value}
     result = collection.find_one(db_filter)
+    print(result)
     return result
 
 
@@ -26,3 +28,7 @@ def delete_document(collection, id):
     filter = { "_id": id }
     deleted_document = collection.delete_one(filter)
     return deleted_document
+
+def search_by_property(collection, dict_of_property_values: dict):
+    result = collection.find({dict_of_property_values})
+    return result
