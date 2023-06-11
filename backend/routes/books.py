@@ -2,12 +2,26 @@ from fastapi import APIRouter, HTTPException , Depends
 from schemas.books import CreateBook, ReturnBook , SerachSchema
 from typing import List , Annotated
 from crud.books import read_all_books, create_book, read_book, update_book, delete_book, search_book
-from db import BOOKS
+from db import BOOKS, BORROW
 from bson import ObjectId
 from auth.jwt_utils import get_current_user
 from schemas.users import CreateUser
+from crud.borrow import borrow, return_book
+from datetime import datetime, timedelta
+from dotenv import load_dotenv
+import os
+from crud.utils import find_and_filter
+
+
+# Load Environment Variables
+load_dotenv()
+# Extract env var
+BORROW_TIME_LIMIT = os.environ['BORROW_TIME_LIMIT']
+
 
 book_router = APIRouter(prefix="/books", tags=["books"])
+
+
 
 @book_router.get("/", response_model=List[ReturnBook])
 def get_books():
@@ -58,17 +72,30 @@ def search_books(model : SerachSchema):
 
 @book_router.put("/{book_id}/borrow/")
 def borrow_book(book_id:str , current_user: Annotated[CreateUser, Depends(get_current_user)]):
-    pass
+    result = borrow(collection=BORROW,
+           user_id=current_user.username,
+           book_id=book_id,
+           start_date=datetime.now(),
+           end_date=datetime.now()+timedelta(days=BORROW_TIME_LIMIT)
+           )
+    if not result:
+        return {"message": "Book has been borrowed Previously!"}
+    return {"message": "Borrow stored in DB successfully!"}
 
 @book_router.put("/{book_id}/return/")
-def return_book():
-    pass
+def return_book_to_db(book_id: str, current_user: Annotated[CreateUser, Depends(get_current_user)]):
+    result = return_book(BORROW, current_user, book_id, datetime.now())
+    if not result:
+        raise HTTPException(status_code=404, detail="You have not borrowed this book!")
+    elif result == "It is too late to return the book!":
+        raise HTTPException(detail="You are returning this book too late!")
+    else:
+        return result
 
 @book_router.get("/genres/")
 def get_book_genres():
-    pass
+    return find_and_filter(BOOKS, 'genre')
 
 @book_router.get("/authors/")
 def get_book_authors():
-    pass
-
+    return find_and_filter(BOOKS, 'author')

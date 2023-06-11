@@ -1,5 +1,5 @@
 def create_document(collection , document):
-    document_dict = document.dict()
+    document_dict = document.__dict__
     collection.insert_one(document_dict)
     return document
 
@@ -36,3 +36,7 @@ def delete_document(collection, id):
 def search(collection, dict_of_filter: dict):
     result = collection.find({dict_of_filter})
     return result
+
+def find_and_filter(collection, requested_portion):
+    list_of_all_values = list(collection.find({}, {requested_portion: 1, "_id": 0}).__dict__.values())
+    return list_of_all_values
