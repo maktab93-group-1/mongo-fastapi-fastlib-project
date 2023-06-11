@@ -20,15 +20,19 @@ def read_document(collection , property: str , value: str):
 def update_document(collection, id, new_document):
     filter = { "_id": id }
     newvalues = { "$set": new_document.dict() }
+    if not collection.find_one(filter):
+        return False
     collection.update_one(filter, newvalues)
     return new_document
     
 
 def delete_document(collection, id):
     filter = { "_id": id }
+    if not collection.find_one(filter):
+        return False
     deleted_document = collection.delete_one(filter)
     return deleted_document
 
-def search_by_property(collection, dict_of_property_values: dict):
-    result = collection.find({dict_of_property_values})
+def search(collection, dict_of_filter: dict):
+    result = collection.find({dict_of_filter})
     return result
