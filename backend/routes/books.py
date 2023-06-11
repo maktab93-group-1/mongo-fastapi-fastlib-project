@@ -1,9 +1,11 @@
-from fastapi import APIRouter, HTTPException
-from schemas.books import CreateBook, ReturnBook
-from typing import List
+from fastapi import APIRouter, HTTPException , Depends
+from schemas.books import CreateBook, ReturnBook , SerachSchema
+from typing import List , Annotated
 from crud.books import read_all_books, create_book, read_book, update_book, delete_book, search_book
 from db import BOOKS
 from bson import ObjectId
+from auth.jwt_utils import get_current_user
+from schemas.users import CreateUser
 
 book_router = APIRouter(prefix="/books", tags=["books"])
 
@@ -41,21 +43,21 @@ def delete_book_in_db(book_id):
     raise HTTPException(status_code=404, detail="bookID not found")
 
 @book_router.get("/search/")
-def search_books(title:str = None, author: str = None, genre: str = None):
+def search_books(model : SerachSchema):
     db_filter = {}
-    if title:
-        db_filter["title"] = title
-    if author:
-        db_filter["author"] = author
-    if genre:
-        db_filter["genre"] = genre
+    if model.title:
+        db_filter["title"] = model.title
+    if model.author:
+        db_filter["author"] = model.author
+    if model.genre:
+        db_filter["genre"] = model.genre
     result = search_book(BOOKS, db_filter)
     if not result:
         return {"message": "No books found!"}
     return result
 
 @book_router.put("/{book_id}/borrow/")
-def borrow_book():
+def borrow_book(book_id:str , current_user: Annotated[CreateUser, Depends(get_current_user)]):
     pass
 
 @book_router.put("/{book_id}/return/")

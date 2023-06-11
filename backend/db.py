@@ -17,6 +17,7 @@ db = client[db_name]
 # Create user & book collections
 USERS = db['users']
 BOOKS = db['books']
+BORROW = db['borrow']
 
 # USERS.__dict__
 # USERS.update_one()
