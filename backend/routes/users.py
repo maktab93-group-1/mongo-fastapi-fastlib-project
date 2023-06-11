@@ -8,7 +8,7 @@ from crud.users import create_user
 from db import USERS
 from auth.auth_utils import get_password_hash
 
-user_router = APIRouter(prefix="/users")
+user_router = APIRouter(prefix="/users", tags=["users"])
 
 @user_router.post("/register/",response_model=ReturnUser)
 def register(user: CreateUser): 
