@@ -12,3 +12,10 @@ class ReturnBook(BaseModel):
     id: str
     title: str | None = None
     availability_status: bool | None = True
+
+
+
+class SerachSchema(BaseModel):
+    title : str | None
+    author : str | None
+    genre : str | None
